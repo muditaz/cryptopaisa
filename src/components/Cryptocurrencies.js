@@ -4,6 +4,7 @@ import { Card, Row, Col, Input } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { CRYPTOS_ON_CRYPTOCURRENCIES_PAGE, CRYPTOS_ON_HOME_PAGE, GLOBAL_STATS_CRYPTOS_BASE_URL, GLOBAL_STATS_CRYPTOS_API_OPTIONS } from '../constants/constants';
+import { apiCall } from '../utils/utils';
 
 const Cryptocurrencies = ({ simplified }) => {
     const dispatch = useDispatch();
@@ -12,11 +13,10 @@ const Cryptocurrencies = ({ simplified }) => {
 
     const getData = async () => {
         if(!simplified) {
-            if(!cryptos || cryptos.length < CRYPTOS_ON_CRYPTOCURRENCIES_PAGE) {
+            if(cryptos && cryptos.length < CRYPTOS_ON_CRYPTOCURRENCIES_PAGE) {
                 const url = GLOBAL_STATS_CRYPTOS_BASE_URL + `?limit=${CRYPTOS_ON_CRYPTOCURRENCIES_PAGE}`;
                 const options = GLOBAL_STATS_CRYPTOS_API_OPTIONS;
-                const response = await fetch(url, options);
-                const result = await response.json();
+                const result = await apiCall(url, options);
                 dispatch({type: 'setCryptos', payload: result?.data?.coins});
             }
         }
@@ -42,8 +42,6 @@ const Cryptocurrencies = ({ simplified }) => {
             className="crypto-card"
             key={currency.uuid}
           >
-
-            {/* Note: Change currency.id to currency.uuid  */}
             <Link key={currency.uuid} to={`/crypto/${currency.uuid}`}>
               <Card
                 title={`${currency.rank}. ${currency.name}`}

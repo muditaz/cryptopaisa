@@ -2,10 +2,11 @@ import millify from "millify";
 import { Typography, Row, Col, Statistic } from "antd";
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import { GLOBAL_STATS_CRYPTOS_API_OPTIONS, CRYPTOS_ON_HOME_PAGE, GLOBAL_STATS_CRYPTOS_BASE_URL, NEWS_BASE_URL, NEWS_ON_HOME_PAGE, NEWS_API_OPTIONS, DEFAULT_NEWS_CATEGORY } from "../constants/constants";
+import { GLOBAL_STATS_CRYPTOS_API_OPTIONS, CRYPTOS_ON_HOME_PAGE, GLOBAL_STATS_CRYPTOS_BASE_URL } from "../constants/constants";
 import { useDispatch, useSelector } from "react-redux";
 import Cryptocurrencies from './Cryptocurrencies';
 import News from './News';
+import { apiCall } from "../utils/utils";
 
 const { Title } = Typography;
 
@@ -15,13 +16,9 @@ const Homepage = () => {
 
   const getData = async () => {
     if(!globalStats) {
-        const globalStatsCryptosURL = GLOBAL_STATS_CRYPTOS_BASE_URL + `?limit=${CRYPTOS_ON_HOME_PAGE}`;
-        const response1 = await fetch(globalStatsCryptosURL, GLOBAL_STATS_CRYPTOS_API_OPTIONS);
-        const result1 = await response1.json();
-        const newsURL = NEWS_BASE_URL + `${DEFAULT_NEWS_CATEGORY}&count=${NEWS_ON_HOME_PAGE}`;
-        const response2 = await fetch(newsURL, NEWS_API_OPTIONS);
-        const result2 = await response2.json();
-        dispatch({type: 'setGlobalStatsCryptosNews', payload: {globalStatsAndCryptos: result1, defaultNews: result2}});
+        const url = GLOBAL_STATS_CRYPTOS_BASE_URL + `?limit=${CRYPTOS_ON_HOME_PAGE}`;
+        const result = await apiCall(url, GLOBAL_STATS_CRYPTOS_API_OPTIONS);
+        dispatch({type: 'setGlobalStatsCryptos', payload: { globalStats: result?.data?.stats, cryptos: result?.data?.coins }});
     }
   };
 

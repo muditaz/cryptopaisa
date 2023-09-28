@@ -12,6 +12,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { Select, Typography, Row, Col, Avatar, Card } from "antd";
 import moment from "moment";
+import { apiCall } from "../utils/utils";
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -33,36 +34,25 @@ const News = ({ simplified }) => {
     "https://www.bing.com/th?id=OVFT.mpzuVZnv8dwIMRfQGPbOPC&pid=News";
 
   const fetchNewsCorrespondingToCategory = async () => {
-    if (!simplified) {
-      if (
-        !news[newsCategory] ||
-        news[newsCategory].length < NEWS_ON_NEWS_PAGE
-      ) {
-        const url =
-          NEWS_BASE_URL + `${newsCategory}&count=${NEWS_ON_NEWS_PAGE}`;
-          const response = await fetch(url, NEWS_API_OPTIONS);
-          const result = await response.json();
-          const cryptosURL =
-          GLOBAL_STATS_CRYPTOS_BASE_URL +
-          `?limit=${CRYPTOS_ON_CRYPTOCURRENCIES_PAGE}`;
-          let cryptosResult = cryptos;
-          let globalStats;
-          if (!cryptos || cryptos.length < CRYPTOS_ON_CRYPTOCURRENCIES_PAGE) {
-            const cryptosResponse = await fetch(
-              cryptosURL,
-              GLOBAL_STATS_CRYPTOS_API_OPTIONS
-            );
-            cryptosResult = await cryptosResponse.json();
-            globalStats = cryptosResult.data.stats;
-            cryptosResult = cryptosResult.data.coins;
-          }
-        
-        dispatch({
-          type: "setNews",
-          payload: { keyName: newsCategory, value: result.value, cryptos: cryptosResult, globalStats },
-        });
-      }
+    let shouldNewsAPIBeCalled = false;
+    let shouldCryptoAPIBeCalled = false;
+    let limit;
+    let newsResults = news[newsCategory];
+    let cryptoResults = cryptos;
+    if(simplified) {
+      shouldNewsAPIBeCalled = !news[newsCategory];
+      if(shouldNewsAPIBeCalled)
+      limit = NEWS_ON_HOME_PAGE;
+    } else {
+      shouldNewsAPIBeCalled = newsCategory === DEFAULT_NEWS_CATEGORY ? news[newsCategory].length < NEWS_ON_NEWS_PAGE : !news[newsCategory];
+      limit = NEWS_ON_NEWS_PAGE;
+      shouldCryptoAPIBeCalled = cryptos.length < CRYPTOS_ON_CRYPTOCURRENCIES_PAGE;
     }
+    if(shouldNewsAPIBeCalled)
+    newsResults = (await apiCall(NEWS_BASE_URL + `${newsCategory}&count=${limit}`, NEWS_API_OPTIONS))?.value;
+    if(shouldCryptoAPIBeCalled)
+    cryptoResults = (await apiCall(GLOBAL_STATS_CRYPTOS_BASE_URL + `?limit=${CRYPTOS_ON_CRYPTOCURRENCIES_PAGE}`, GLOBAL_STATS_CRYPTOS_API_OPTIONS))?.data?.coins;
+    dispatch({ type: 'setNews', payload: { newsKey: newsCategory, newsValue: newsResults, cryptos: cryptoResults } });
   };
 
   useEffect(() => {
@@ -125,6 +115,7 @@ const News = ({ simplified }) => {
       {!simplified && (
         <Col span={24}>
           <Select
+            showSearch
             className="select-news"
             placeholder="Select a Crypto"
             optionFilterProp="children"
