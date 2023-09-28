@@ -44,9 +44,9 @@ const News = ({ simplified }) => {
       if(shouldNewsAPIBeCalled)
       limit = NEWS_ON_HOME_PAGE;
     } else {
-      shouldNewsAPIBeCalled = newsCategory === DEFAULT_NEWS_CATEGORY ? news[newsCategory].length < NEWS_ON_NEWS_PAGE : !news[newsCategory];
+      shouldNewsAPIBeCalled = newsCategory === DEFAULT_NEWS_CATEGORY ? (news[newsCategory] && news[newsCategory].length < NEWS_ON_NEWS_PAGE) : !news[newsCategory];
       limit = NEWS_ON_NEWS_PAGE;
-      shouldCryptoAPIBeCalled = cryptos.length < CRYPTOS_ON_CRYPTOCURRENCIES_PAGE;
+      shouldCryptoAPIBeCalled = (cryptos && cryptos.length < CRYPTOS_ON_CRYPTOCURRENCIES_PAGE);
     }
     if(shouldNewsAPIBeCalled)
     newsResults = (await apiCall(NEWS_BASE_URL + `${newsCategory}&count=${limit}`, NEWS_API_OPTIONS))?.value;

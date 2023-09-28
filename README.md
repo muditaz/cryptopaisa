@@ -12,4 +12,5 @@ CryptoPaisa
 - Dropdown functionality completed.
 - Applied memoization technique throughout components to prevent unnecessary API Calls, thus increasing speed of app.
 - Refactoring completed and created utils as well
+- Crypto details completed excluding Charts
 
