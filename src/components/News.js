@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Select, Typography, Row, Col, Avatar, Card } from "antd";
 import moment from "moment";
 import { apiCall } from "../utils/utils";
+import Loader from "./Loader";
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -59,7 +60,7 @@ const News = ({ simplified }) => {
     fetchNewsCorrespondingToCategory();
   }, [newsCategory]);
 
-  if (!news[newsCategory]) return "Loading...";
+  if (!news[newsCategory]) return(<Loader />);
 
   const newsCards = [];
   for (

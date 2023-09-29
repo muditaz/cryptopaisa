@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { CRYPTOS_ON_CRYPTOCURRENCIES_PAGE, CRYPTOS_ON_HOME_PAGE, GLOBAL_STATS_CRYPTOS_BASE_URL, GLOBAL_STATS_CRYPTOS_API_OPTIONS } from '../constants/constants';
 import { apiCall } from '../utils/utils';
+import Loader from './Loader';
 
 const Cryptocurrencies = ({ simplified }) => {
     const dispatch = useDispatch();
@@ -27,7 +28,7 @@ const Cryptocurrencies = ({ simplified }) => {
     }, []);
 
     if(!cryptos) 
-    return('Loading...');
+    return(<Loader />);
 
     const cryptoCards = [];
 

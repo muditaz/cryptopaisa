@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Cryptocurrencies from './Cryptocurrencies';
 import News from './News';
 import { apiCall } from "../utils/utils";
+import Loader from "./Loader";
 
 const { Title } = Typography;
 
@@ -27,7 +28,7 @@ const Homepage = () => {
   }, []);
 
   if(!globalStats) {
-    return('Loading...');
+    return(<Loader />);
   }
 
   const { total, totalExchanges, totalMarketCap, total24hVolume, totalMarkets } = globalStats;

@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { CRYPTO_INFO_URL, GLOBAL_STATS_CRYPTOS_API_OPTIONS } from "../constants/constants";
 import { apiCall } from "../utils/utils";
+import Loader from "./Loader";
 
 Chart.register(...registerables);
 
@@ -29,7 +30,7 @@ const LineChart = ({ cryptoId, timePeriod, currentPrice, coinName }) => {
     }, [timePeriod]);
 
     if(!cryptoHistory)
-    return 'Loading...'
+    return(<Loader />);
 
     const cryptoPrice = [];
     const cryptoTimestamp = [];

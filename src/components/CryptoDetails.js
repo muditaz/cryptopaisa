@@ -8,6 +8,7 @@ import { CRYPTO_INFO_URL, DEFAULT_TIMEPERIOD, GLOBAL_STATS_CRYPTOS_API_OPTIONS }
 import { apiCall } from "../utils/utils";
 import LineChart from "./LineChart";
 import { useDispatch, useSelector } from "react-redux";
+import Loader from "./Loader";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -24,7 +25,6 @@ const CryptoDetails = () => {
         let cryptoInfoResult;
         if(!cryptoDetails || !cryptoDetails.cryptoInfo) {
             cryptoInfoResult = await apiCall(url, options);
-            console.log(cryptoInfoResult);
         }
         if(cryptoInfoResult)
         dispatch({ type: 'setCryptoItemInfo', payload: { cryptoId, cryptoInfoResult: cryptoInfoResult?.data?.coin, timePeriod} });
@@ -35,10 +35,9 @@ const CryptoDetails = () => {
     }, []);
 
     if(!cryptoDetails)
-    return 'Loading...';
+    return(<Loader />);
 
     const cryptoInfo = cryptoDetails.cryptoInfo;
-    console.log(cryptoInfo);
 
     const time = ['3h', '24h', '7d', '30d', '1y', '3m', '3y', '5y'];
 
