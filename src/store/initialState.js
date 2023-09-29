@@ -3,6 +3,9 @@ const initialState = {
     cryptos: null,
     news: {
         
+    },
+    cryptoItemInfo: {
+        
     }
 };
 

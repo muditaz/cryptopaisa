@@ -8,7 +8,7 @@ export const GLOBAL_STATS_CRYPTOS_API_OPTIONS = {
   },
 };
 
-export const CRYPTO_INFO_URL = "https://coinranking1.p.rapidapi.com/coin/"
+export const CRYPTO_INFO_URL = "https://coinranking1.p.rapidapi.com/coin/";
 
 export const NEWS_BASE_URL = 'https://bing-news-search1.p.rapidapi.com/news/search?safeSearch=Off&textFormat=Raw&freshness=Day&q=';
 export const NEWS_API_OPTIONS = {
@@ -26,3 +26,5 @@ export const NEWS_ON_HOME_PAGE = 6;
 export const NEWS_ON_NEWS_PAGE = 12;
 
 export const DEFAULT_NEWS_CATEGORY = 'Cryptocurrency';
+
+export const DEFAULT_TIMEPERIOD = '7d';

@@ -19,6 +19,18 @@ const rootReducer = (state = initialState, action) => {
                 draft.cryptos = action.payload.cryptos;
                 break;
             }
+            case 'setCryptoItemInfo': {
+                const objToAssign = {};
+                objToAssign.cryptoInfo = action.payload.cryptoInfoResult;
+                objToAssign.timePeriod = {};
+                objToAssign.timePeriod[action.payload.timePeriod] = '';
+                draft.cryptoItemInfo[action.payload.cryptoId] = objToAssign;
+                break;
+            }
+            case 'setCryptoItemHistory': {
+                draft.cryptoItemInfo[action.payload.cryptoId].timePeriod[action.payload.timePeriod] = action.payload.cryptoHistoryResult;
+                break;
+            }
             default:
                 break;
         }

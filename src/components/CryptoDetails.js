@@ -4,38 +4,48 @@ import { useParams } from "react-router-dom";
 import millify from 'millify';
 import { Col, Row, Typography, Select } from 'antd';
 import { MoneyCollectOutlined, DollarCircleOutlined, FundOutlined, ExclamationCircleOutlined, StopOutlined, TrophyOutlined, CheckOutlined, NumberOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { CRYPTO_INFO_URL, GLOBAL_STATS_CRYPTOS_API_OPTIONS } from "../constants/constants";
+import { CRYPTO_INFO_URL, DEFAULT_TIMEPERIOD, GLOBAL_STATS_CRYPTOS_API_OPTIONS } from "../constants/constants";
 import { apiCall } from "../utils/utils";
+import LineChart from "./LineChart";
+import { useDispatch, useSelector } from "react-redux";
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 const CryptoDetails = () => {
-    const { coinId } = useParams();
-    const [timePeriod, setTimePeriod] = useState('7d');
-    const [cryptoInfo, setCryptoInfo] = useState(null);
+    const dispatch = useDispatch();
+    const { cryptoId } = useParams();
+    const [timePeriod, setTimePeriod] = useState(DEFAULT_TIMEPERIOD);
+    const cryptoDetails = useSelector((state) => {return(state.cryptoItemInfo[cryptoId])});
 
     const setCryptoInfoFromAPI = async () => {
-        const url = CRYPTO_INFO_URL + coinId;
+        const url = CRYPTO_INFO_URL + cryptoId;
         const options = GLOBAL_STATS_CRYPTOS_API_OPTIONS;
-        const result = await apiCall(url, options);
-        console.log(result.data.coin);
-        setCryptoInfo(result.data.coin);
+        let cryptoInfoResult;
+        if(!cryptoDetails || !cryptoDetails.cryptoInfo) {
+            cryptoInfoResult = await apiCall(url, options);
+            console.log(cryptoInfoResult);
+        }
+        if(cryptoInfoResult)
+        dispatch({ type: 'setCryptoItemInfo', payload: { cryptoId, cryptoInfoResult: cryptoInfoResult?.data?.coin, timePeriod} });
     };
 
     useEffect(() => {
         setCryptoInfoFromAPI();
     }, []);
 
-    if(!cryptoInfo)
+    if(!cryptoDetails)
     return 'Loading...';
+
+    const cryptoInfo = cryptoDetails.cryptoInfo;
+    console.log(cryptoInfo);
 
     const time = ['3h', '24h', '7d', '30d', '1y', '3m', '3y', '5y'];
 
     const stats = [
         { title: 'Price to USD', value: `$ ${cryptoInfo?.price && millify(cryptoInfo?.price)}`, icon: <DollarCircleOutlined /> },
         { title: 'Rank', value: cryptoInfo?.rank, icon: <NumberOutlined /> },
-        { title: '24h Volume', value: `$ ${cryptoInfo?.volume && millify(cryptoInfo?.volume)}`, icon: <ThunderboltOutlined /> },
+        { title: '24h Volume', value: `$ ${millify(cryptoInfo['24hVolume'])}`, icon: <ThunderboltOutlined /> },
         { title: 'Market Cap', value: `$ ${cryptoInfo?.marketCap && millify(cryptoInfo?.marketCap)}`, icon: <DollarCircleOutlined /> },
         { title: 'All-time-high(daily avg.)', value: `$ ${cryptoInfo?.allTimeHigh?.price && millify(cryptoInfo?.allTimeHigh?.price)}`, icon: <TrophyOutlined /> },
       ];
@@ -54,11 +64,12 @@ const CryptoDetails = () => {
                 <Title level={2} className="coin-name">
                     {cryptoInfo.name} Price
                 </Title>
-                <p>{cryptoInfo.name} live price in US Dollar (USD). View value statistics, market cap and supply.</p>
+                <p>{cryptoInfo.name} price in US Dollar (USD). View value statistics, market cap and supply.</p>
             </Col>
             <Select defaultValue={timePeriod} className="select-timeperiod" placeholder="Select Timeperiod" onChange={(value) => setTimePeriod(value)}>
                {time.map((date) => <Option key={date}>{date}</Option>)}
             </Select>
+            <LineChart cryptoId={cryptoId} timePeriod={timePeriod} currentPrice={millify(cryptoInfo?.price)} coinName={cryptoInfo?.name} />
             <Col className="stats-container">
                 <Col className="coin-value-statistics">
                     <Col className="coin-value-statistics-heading">

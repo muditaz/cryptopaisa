@@ -164,6 +164,7 @@ a:hover{
     display: flex;
     flex-direction: column;
     gap: 40px;
+    margin-top: 30px;
 }
 
 .stats-container h2{
@@ -367,6 +368,7 @@ width: 70%;
 .select-timeperiod{
     width: 200px !important;
     margin-top: 20px !important;
+    margin-bottom: 20px;
 }
 
 .footer {
